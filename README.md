@@ -1,13 +1,13 @@
-# Introduction to Bioimage Analysis: 3D Segmentation Workshop
+# Curso de Fundamentos de Microscopia de Fluoresencia y Confocal UPCH
 
-Welcome to the Bioimage Analysis workshop! This 4-hour practical introduces 3D image segmentation and quantification using Napari, CellPose, and Python-based image analysis tools.
+Bienvenidos al taller de análisis de bioimagenes de la UPCH. Estas 4 horas prácticas te introducen a la cuantificación, segmentación y análisis usan Napari, Napari-assistant con pyclesperanto y herramientas de análisis de imagenes mediante python.
 
-## Workshop Overview
+## Partes del taller
 
-This workshop is divided into two sections, each beginning with a theoretical lecture:
+Este taller estará dividio en 2 partes (1 teórica y 1 práctica), comenzando con la parte teórica:
 
-### Section 1: Segmentation Fundamentals (2 hours)
-- **Theoretical Lecture** (30 minutes): Principles of image segmentation, thresholding methods, and morphological operations
+### Sección 1: Fundamentos de segmentación (2 hours)
+- **Lectura teórica** (30 minutos): Principios de segmentación de imágenes, métodos de thresholding, and operaciones morfológicas
 - **Practical: Napari-based Segmentation** (90 minutes): Hands-on segmentation using Napari with the segmentation assistant
   - See [Napari Segmentation Guide](./segmentation_napari.md) for detailed instructions
 

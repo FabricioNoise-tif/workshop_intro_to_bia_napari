@@ -1,0 +1,14 @@
+Spanish version
+
+1. Instalar [Pixi](https://pixi.sh/) - un gestor de paquetes para entornos de Python.
+2. Descargar desde GitHub el archivo "Prueba Pixi Toml" haciendo clic en "Code" y luego en "Download ZIP".
+3. Extraer el archivo ZIP en el disco local en una carpeta llamada "napari" para tener un acceso fácil.
+4. Abrir la terminal y escribir:
+   cd C:\napari
+
+5. Instalar el entorno en la misma terminal:
+   pixi install
+   pixi install --all
+
+6. Ahora para cada vez abrir el programa debes hacer el paso 5 para acceder a la carpeta (cd C:\napari) y después escribir:
+   pixi run napari
