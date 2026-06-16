@@ -4,50 +4,101 @@ Bienvenidos al taller de análisis de bioimagenes de la UPCH. Estas 4 horas prá
 
 ## Partes del taller
 
-Este taller estará dividio en 2 partes (1 teórica y 1 práctica), comenzando con la parte teórica:
+Este taller estará dividido en 2 partes (1 teórica y 1 práctica), comenzando con la parte teórica:
 
-### Sección 1: Fundamentos de segmentación (2 hours)
-- **Lectura teórica** (30 minutos): Principios de segmentación de imágenes, métodos de thresholding, and operaciones morfológicas
-- **Practical: Napari-based Segmentation** (90 minutes): Hands-on segmentation using Napari with the segmentation assistant
-  - See [Napari Segmentation Guide](./segmentation_napari.md) for detailed instructions
+## Módulo 1: Fundamentos teóricos (60 min · 0:00–1:00 h)
 
-### Section 2: Advanced Segmentation Methods (2 hours)
-- **Theoretical Lecture** (30 minutes): Deep learning-based segmentation and CellPose overview
-- **Practical: CellPose Segmentation** (90 minutes): Practical application of CellPose for automated cell segmentation
-  - See [CellPose Segmentation Guide](./segmentation_cellpose.md) for detailed instructions
+- **Recurso:** ejecutar napari siguiendo la instrucción de [instalación de Napari](./installation_napari.md)
+ 
+- **Lectura/discusión** (20 min): ¿Qué es el análisis de bioimagen cuantitativo y por qué reemplaza el conteo manual en publicaciones actuales?
+- **Tipos de microscopía en esta clase** (15 min): IHC con cromógeno DAB, cámara Neubauer con exclusión trypan blue, confocal z-stack
+- **Napari como entorno de trabajo** (15 min): layers (imagen, etiquetas, shapes, puntos), plugins, flujo GUI + consola, escala px/µm
+- **Conceptos clave** (10 min): deconvolución de color, umbralización, segmentación, cuantificación, validación contra referencia manual
+
+---
+ 
+*— Pausa 10 min —*
+ 
+---
+
+## Módulo 2: Microglía — IHC / DAB (50 min · 1:10–2:00 h)
+ 
+### Segmentación (30 min)
+ 
+- **Carga de imagen** (5 min): abrir archivo CZI con `bioio` / `napari-aicsimageio`; verificar escala (`layer.scale`)
+- **ROI manual** (5 min): dibujar región de interés con el Shapes layer; convertir a máscara binaria desde consola
+- **Deconvolución de color** (10 min): separar canal DAB con `skimage.color.separate_stains` + `hdx_from_rgb`; mostrar histograma antes/después
+- **Umbralización y filtrado** (10 min): Otsu dentro del ROI → filtro de tamaño → etiquetado de componentes conexos (`skimage.measure.label`)
+
+### Análisis y validación (20 min)
+ 
+- **Métricas por célula** (10 min): exportar área, intensidad media y centroide con `napari-skimage-regionprops`
+- **Validación** (10 min): comparar conteo automático vs. referencia manual con scatter plot; discutir fuentes de error
+- **Cerrar imagen** antes de pasar al siguiente módulo para liberar RAM
+
+---
+ 
+*— Pausa 10 min —*
+ 
+---
+ 
+## Módulo 3: PBMC — Cámara Neubauer (40 min · 2:10–2:50 h)
+ 
+### Segmentación (25 min)
+ 
+- **Carga de imagen** (5 min): abrir imagen de Neubauer; ajustar contraste y escala
+- **Preprocesamiento** (10 min): `top_hat_sphere` para suprimir fondo variable → `median_sphere` para suavizar ruido
+- **Detección de células** (10 min): `voronoi_otsu_labeling` aplicado a la **imagen original** (no preprocesada) — el preprocesamiento solo mejora detección de máximos locales; aplicar máscara manual de cuadrantes → `exclude_labels_outside_size_range`
+
+> **Nota conceptual importante:** las células muertas teñidas con trypan blue son **mínimos** locales de intensidad, no máximos. `voronoi_otsu` detecta máximos → invierte la imagen si necesitas clasificar células muertas por separado.
+ 
+### Análisis y validación (15 min)
+ 
+- **Viabilidad** (8 min): `mean_intensity_map` para clasificar células por intensidad (vivas = alta intensidad, muertas = baja intensidad si trypan blue visible)
+- **Validación** (7 min): conteo automático vs. manual; discutir distribución unimodal si viabilidad >95 %
+- **Cerrar imagen**
+
+---
+
+## Módulo 4: Giro dentado + introducción 3D (30 min · 2:50–3:20 h)
+ 
+### Segmentación (20 min)
+ 
+- **Giro dentado** (12 min): ROI manual sobre la región del hipocampo → deconvolución DAB → StarDist (`2D_versatile_he`) como alternativa a Otsu para morfología neuronal compleja
+- **Demo 3D** (8 min): cargar z-stack con `bioio` → navegar slices → proyección MIP (`np.max(stack, axis=0)`) → mencionar que el mismo pipeline 2D se puede extender con `voronoi_otsu_labeling` en 3D
+
+### Análisis (10 min)
+ 
+- Exportar métricas de neuronas con `regionprops_table`
+- Comparar conteo StarDist vs. manual; discutir ventajas sobre umbralización simple
+- **Cerrar imágenes**
+---
+ 
+## Módulo 5: Buenas prácticas — guardar .tif para publicación (20 min · 3:40–4:00 h)
+ 
+- **Metadata esencial** (8 min): resolución (µm/px), canal, bit depth, sistema de coordenadas — todo debe quedar en el archivo
+- **Guardar con tifffile** (7 min): diferencia entre TIFF plano y OME-TIFF; cómo preservar metadata del microscopio
+
+---
+ 
+## Resumen de tiempos
+ 
+| Módulo | Contenido | Tiempo |
+|--------|-----------|--------|
+| 1 | Fundamentos teóricos | 60 min |
+| — | Pausa | 10 min |
+| 2 | Microglía: segmentación + análisis | 50 min |
+| — | Pausa | 10 min |
+| 3 | PBMC: segmentación + análisis | 40 min |
+| 4 | Giro dentado + demo 3D + análisis | 30 min |
+| 5 | Buenas prácticas .tif + cierre | 20 min |
+| **Total** | | **4:00 h** |
+
+---
 
 ## Lecture Materials
 
 Download the presentation slides and additional resources from **[Zenodo](https://zenodo.org/records/18717816)**.
-
-## Environment Setup
-
-### Prerequisites
-
-Install [Pixi](https://pixi.sh/) - a package manager for Python environments.
-
-### Installation
-
-1. Clone or download this repository
-2. Open a terminal in the repository directory
-3. Install the environment:
-   ```bash
-   pixi install --all
-   ```
-
-### Download data
-
-Downloaded the dataset with `pixi run download-data`.
-
-## Running the Workshop
-
-### Start Napari with the Assistant Plugin
-
-```bash
-pixi run assistant
-```
-
-This launches Napari with the segmentation assistant panel that guides you through the workflow.
 
 ## Sample Data
 
@@ -56,20 +107,7 @@ Download example images from Zenodo:
 
 https://zenodo.org/records/17986091
 
-## Tips & Tricks
-
-- **2D/3D Toggle**: Click the button in the lower-left corner to switch between 2D slicing and 3D rendering
-- **Orthogonal Views**: Click the axis order button to see XY, XZ, and YZ planes simultaneously
-- **Adjusting Parameters**: Parameters like erosion radius should be tuned based on your image
-  - Larger radius = more aggressive erosion (better separation, but may lose small objects)
-  - Smaller radius = conservative erosion (keeps more detail, but may not separate adequately)
-- **Memory**: Working with large 3D stacks can be memory-intensive. Consider downsampling or working with subsets if needed
-
-## Troubleshooting
-
-### Napari won't launch
-- Ensure all dependencies are properly installed: `pixi install`
-- Try clearing the pixi cache: `pixi clean cache`
+---
 
 ### Bad segmentation
 - Try different preprocessing methods:
