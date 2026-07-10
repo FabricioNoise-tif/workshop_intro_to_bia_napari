@@ -1,134 +1,87 @@
-# Curso de Fundamentos de Microscopia de Fluoresencia y Confocal UPCH
-
-Bienvenidos al taller de análisis de bioimagenes de la UPCH. Estas 4 horas prácticas te introducen a la cuantificación, segmentación y análisis usan Napari, Napari-assistant con pyclesperanto y herramientas de análisis de imagenes mediante python.
-
-## Partes del taller
-
-Este taller estará dividido en 2 partes (1 teórica y 1 práctica), comenzando con la parte teórica:
-
-## Módulo 1: Fundamentos teóricos (60 min · 0:00–1:00 h)
-
-- **Recurso:** ejecutar napari siguiendo la instrucción de [instalación de Napari](./installation_napari.md)
+# CFMO – UPCH: Análisis de Bioimágenes
  
-- **Lectura/discusión** (20 min): ¿Qué es el análisis de bioimagen cuantitativo y por qué reemplaza el conteo manual en publicaciones actuales?
-- **Tipos de microscopía en esta clase** (15 min): IHC con cromógeno DAB, cámara Neubauer con exclusión trypan blue, confocal z-stack
-- **Napari como entorno de trabajo** (15 min): layers (imagen, etiquetas, shapes, puntos), plugins, flujo GUI + consola, escala px/µm
-- **Conceptos clave** (10 min): deconvolución de color, umbralización, segmentación, cuantificación, validación contra referencia manual
-
----
+Material de clase del módulo de **post-análisis de imágenes** del *Curso de Fundamentos en Microscopía de Fluorescencia y Confocal (CFMO)*, dictado en la Universidad Peruana Cayetano Heredia (UPCH) como parte del módulo práctico organizado por **LABI (Latin American Bioimaging)**.
  
-*— Pausa 10 min —*
- 
----
-
-## Módulo 2: Microglía — IHC / DAB (50 min · 1:10–2:00 h)
- 
-### Segmentación (30 min)
- 
-- **Carga de imagen** (5 min): abrir archivo CZI con `bioio` / `napari-aicsimageio`; verificar escala (`layer.scale`)
-- **ROI manual** (5 min): dibujar región de interés con el Shapes layer; convertir a máscara binaria desde consola
-- **Deconvolución de color** (10 min): separar canal DAB con `skimage.color.separate_stains` + `hdx_from_rgb`; mostrar histograma antes/después
-- **Umbralización y filtrado** (10 min): Otsu dentro del ROI → filtro de tamaño → etiquetado de componentes conexos (`skimage.measure.label`)
-
-### Análisis y validación (20 min)
- 
-- **Métricas por célula** (10 min): exportar área, intensidad media y centroide con `napari-skimage-regionprops`
-- **Validación** (10 min): comparar conteo automático vs. referencia manual con scatter plot; discutir fuentes de error
-- **Cerrar imagen** antes de pasar al siguiente módulo para liberar RAM
-
----
- 
-*— Pausa 10 min —*
+> Adaptado del material original de **KHIPUX – Quito**, por **Agustín Corbat** ([acorbat.github.io](https://acorbat.github.io)).
  
 ---
  
-## Módulo 3: PBMC — Cámara Neubauer (40 min · 2:10–2:50 h)
+## 📋 Contenido de la clase
  
-### Segmentación (25 min)
+La sesión recorre el flujo completo de análisis de bioimágenes, desde los fundamentos de imagen digital hasta segmentación por deep learning:
  
-- **Carga de imagen** (5 min): abrir imagen de Neubauer; ajustar contraste y escala
-- **Preprocesamiento** (10 min): `top_hat_sphere` para suprimir fondo variable → `median_sphere` para suavizar ruido
-- **Detección de células** (10 min): `voronoi_otsu_labeling` aplicado a la **imagen original** (no preprocesada) — el preprocesamiento solo mejora detección de máximos locales; aplicar máscara manual de cuadrantes → `exclude_labels_outside_size_range`
-
-> **Nota conceptual importante:** las células muertas teñidas con trypan blue son **mínimos** locales de intensidad, no máximos. `voronoi_otsu` detecta máximos → invierte la imagen si necesitas clasificar células muertas por separado.
- 
-### Análisis y validación (15 min)
- 
-- **Viabilidad** (8 min): `mean_intensity_map` para clasificar células por intensidad (vivas = alta intensidad, muertas = baja intensidad si trypan blue visible)
-- **Validación** (7 min): conteo automático vs. manual; discutir distribución unimodal si viabilidad >95 %
-- **Cerrar imagen**
-
----
-
-## Módulo 4: Giro dentado + introducción 3D (30 min · 2:50–3:20 h)
- 
-### Segmentación (20 min)
- 
-- **Giro dentado** (12 min): ROI manual sobre la región del hipocampo → deconvolución DAB → StarDist (`2D_versatile_he`) como alternativa a Otsu para morfología neuronal compleja
-- **Demo 3D** (8 min): cargar z-stack con `bioio` → navegar slices → proyección MIP (`np.max(stack, axis=0)`) → mencionar que el mismo pipeline 2D se puede extender con `voronoi_otsu_labeling` en 3D
-
-### Análisis (10 min)
- 
-- Exportar métricas de neuronas con `regionprops_table`
-- Comparar conteo StarDist vs. manual; discutir ventajas sobre umbralización simple
-- **Cerrar imágenes**
+1. **Fundamentos de imagen digital**
+   Qué es una imagen digital, de dónde vienen las imágenes (sensor → fotón → electrón → ADC), tamaño de píxel vs. resolución óptica, bit-depth (1-bit a 32-bit) e histogramas.
+2. **Cuantificación básica en Fiji**
+   Canales, brillo/contraste (y por qué nunca usar *Apply*), LUTs, representaciones aptas para daltonismo, dimensiones de una imagen (2D–5D) y deconvolución de color en RGB.
+3. **Segmentación clásica en Napari**
+   Pipeline completo con `napari-assistant` / `pyclesperanto`:
+   - **Remove background** — `top_hat_sphere` vs. `top_hat_box`
+   - **Filtrado de ruido** — `gaussian_blur` vs. `median_filter`
+   - **Binarización** — `threshold_otsu` vs. `threshold_voronoi`
+   - **Labeling** — `voronoi_otsu_labeling`, `connected_component_labeling`, `local_minima_seeded_watershed`
+   - **Limpieza de máscaras y medición** — `regionprops`, exportación a CSV/Excel
+4. **Metadatos y formatos de archivo**
+   Metadata experimental/de adquisición/analítica, formatos propietarios (ND2, LIF, CZI...) vs. abiertos (TIFF, HDF5, OME-TIFF, OME-Zarr) y criterios para elegir uno u otro.
+5. **Cuantificación de labels**
+   Medidas de forma, intensidad, textura y relaciones espaciales entre objetos segmentados.
+6. **Segmentación por Machine Learning y Deep Learning**
+   Machine learning clásico vs. deep learning, **StarDist** (Schmidt et al., MICCAI 2018) vs. **CellPose** (Stringer et al., Nat. Methods 2021), y el ecosistema de modelos pre-entrenados (bioimage.io, ZeroCostDL4Mic, Ilastik, DeepLabCut).
 ---
  
-## Módulo 5: Buenas prácticas — guardar .tif para publicación (20 min · 3:40–4:00 h)
+## 🎯 Objetivos de aprendizaje
  
-- **Metadata esencial** (8 min): resolución (µm/px), canal, bit depth, sistema de coordenadas — todo debe quedar en el archivo
-- **Guardar con tifffile** (7 min): diferencia entre TIFF plano y OME-TIFF; cómo preservar metadata del microscopio
-
+Al finalizar la sesión, el estudiante podrá:
+ 
+- Distinguir entre percepción visual subjetiva y cuantificación objetiva de imágenes.
+- Ejecutar un flujo de segmentación clásica reproducible en Napari (background removal → filtrado → binarización → labeling → medición).
+- Elegir el algoritmo correcto según el tipo de muestra (células aisladas vs. tejido denso; objetos convexos vs. irregulares).
+- Guardar y reutilizar workflows como código, para garantizar reproducibilidad.
+- Entender cuándo migrar de segmentación clásica a modelos de deep learning (StarDist / CellPose).
 ---
  
-## Resumen de tiempos
+## 🛠️ Herramientas usadas
  
-| Módulo | Contenido | Tiempo |
-|--------|-----------|--------|
-| 1 | Fundamentos teóricos | 60 min |
-| — | Pausa | 10 min |
-| 2 | Microglía: segmentación + análisis | 50 min |
-| — | Pausa | 10 min |
-| 3 | PBMC: segmentación + análisis | 40 min |
-| 4 | Giro dentado + demo 3D + análisis | 30 min |
-| 5 | Buenas prácticas .tif + cierre | 20 min |
-| **Total** | | **4:00 h** |
-
+| Herramienta | Uso en la clase |
+|---|---|
+| [Fiji / ImageJ](https://fiji.sc/) | Cuantificación básica, manejo de canales y LUTs |
+| [Napari](https://napari.org/) | Visualización multidimensional y segmentación |
+| [napari-assistant](https://github.com/haesleinhuepf/napari-assistant) / [pyclesperanto](https://github.com/clEsperanto/pyclesperanto_prototype) | Pipeline de segmentación clásica GPU-acelerado |
+| [StarDist](https://github.com/stardist/stardist) | Segmentación de núcleos por polígonos estrella-convexos |
+| [CellPose](https://github.com/MouseLand/cellpose) | Segmentación generalista por flow fields |
+| [bioimage.io](https://bioimage.io/) | Repositorio de modelos pre-entrenados |
+ 
 ---
-
-## Lecture Materials
-
-Download the presentation slides and additional resources from **[Zenodo](https://zenodo.org/records/18717816)**.
-
-## Sample Data
-
-Download example images from Zenodo:
-- **3D image**: `Lund.tif` - Full 3D stack for this workshop
-
-https://zenodo.org/records/17986091
-
+ 
+## 📁 Estructura del repositorio
+ 
+```
+├── CFMO_UPCH.pdf        # Slides de la clase
+├── workflows/           # Workflows exportados de napari-assistant (Generate code)
+└── README.md
+```
+ 
 ---
-
-### Bad segmentation
-- Try different preprocessing methods:
-  - Use different thresholding methods (Otsu, Li, Isodata)
-  - Adjust erosion/dilation parameters
-  - Increase/decrease White Top Hat radius
-  - Apply Gaussian smoothing before thresholding (available in assistant)
-
-### Memory issues with large stacks
-- Open only the region of interest (ROI)
-- Downsampling spatial dimensions
-- Process slices individually and recombine
-
-## Further Learning
-
-- [Napari Documentation](https://napari.org)
-- [scikit-image Filters](https://scikit-image.org/docs/stable/api/skimage.filters.html)
-- [napari-assistant](https://github.com/napari-assistant/napari-assistant)
-- [Full Light-Sheet Workshop](https://bruvellu.github.io/light-sheet-image-analysis-workshop-2026/)
-
-## References
-
-- Cuenca, M., et al. - Practical segmentation workshop
-- Data from: https://zenodo.org/records/17986091
+ 
+## 📚 Referencias clave
+ 
+- Schmidt, U., Weigert, M., Broaddus, C., Myers, G. *Cell Detection with Star-Convex Polygons.* MICCAI (2018).
+- Stringer, C., Wang, T., Michaelos, M., Pachitariu, M. *Cellpose: a generalist algorithm for cellular segmentation.* Nature Methods 18, 100–106 (2021).
+- Haase, R. et al. *A Hitchhiker's guide through the bio-image analysis software universe.* FEBS Letters (2022).
+- Haase, R., Royer, L.A., Steinbach, P. et al. *CLIJ: GPU-accelerated image processing for everyone.* Nature Methods 17, 5–6 (2020).
+- Swedlow, J. et al. *OME-TIFF / Open Microscopy Environment Data Model.* Genome Biology (2005).
+---
+ 
+## 👤 Contacto
+ 
+**Fabricio Chimoy Ayala**
+📧 fabricio.chimoy.ayala@gmail.com
+💻 [github.com/FabricioNoise-tif](https://github.com/FabricioNoise-tif)
+ 
+**Agustín Corbat** (material original)
+📧 acorbat@df.uba.ar
+💻 [acorbat.github.io](https://acorbat.github.io) · [@acorbat.bsky.social](https://bsky.app/profile/acorbat.bsky.social)
+ 
+---
+ 
+*Material dictado en el marco de CFMO Montevideo 2026, curso de fundamentos en microscopía óptica organizado por LABI.*
