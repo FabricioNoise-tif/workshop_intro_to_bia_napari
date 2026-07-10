@@ -2,7 +2,7 @@
  
 Material de clase del módulo de **post-análisis de imágenes** del *Curso de Fundamentos en Microscopía de Fluorescencia y Confocal (CFMO)*, dictado en la Universidad Peruana Cayetano Heredia (UPCH) como parte del módulo práctico organizado por **LABI (Latin American Bioimaging)**.
 
-Link del Canva: 
+Link del Canva: https://canva.link/lq0xm50hyxlsrln
  
 > Adaptado del material original de **KHIPUX – Quito**, por **Agustín Corbat** ([acorbat.github.io](https://acorbat.github.io)).
  
