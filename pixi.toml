@@ -1,8 +1,13 @@
 [workspace]
 name = "workshop_intro_to_bia_napari"
 version = "0.1.0"
-description = "Entorno unificado para microglía - UPCH"
-authors = ["Agustin Corbat <acorbat.bia@gmail.com>"]
+description = "Entorno unificado para bioimagen y Napari - CFMO LABI UPCH"
+authors = [
+    "Fabricio Chimoy Ayala <fabricio.chimoy.ayala@gmail.com>",
+    "Fabio Torres Bocanegra <fabio.torres@upch.pe>",
+    "Edson Bernal <edson.bernal@upch.pe>",
+    "Agustin Corbat <acorbat.bia@gmail.com>"
+]
 channels = ["conda-forge", "pytorch"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
@@ -13,9 +18,28 @@ pytorch = {version = "*", build = "cpu*"}
 python = "3.11.*"
 napari = ">=0.5.0"
 cellpose = "*"
-stardist = "*"
 bioio = "*"
 jupyterlab = "*"
+pyqt = "*"
+
+[feature.cellpose.tasks]
+cellpose = "napari"
+napari = { cmd = "python -m napari" }
+
+[feature.stardist]
+platforms = ["win-64", "linux-64", "osx-arm64"]
+
+[feature.stardist.dependencies]
+python = "3.11.*"
+napari = ">=0.5.0"
+bioio = "*"
+jupyterlab = "*"
+pyqt = "*"
+
+[feature.stardist.pypi-dependencies]
+tensorflow = "*"
+stardist = "*"
+stardist-napari = "*"
 
 [feature.assistant.dependencies]
 python = "3.10.*"
@@ -31,11 +55,15 @@ pyqt = "*"
 [environments]
 assistant = ["assistant", "default"]
 cellpose = ["cellpose", "default"]
+stardist = ["stardist", "default"]
 
 [feature.assistant.tasks]
 assistant = "napari"
 napari = { cmd = "python -m napari", env = { PYOPENCL_NO_CACHE = "1" } }
 reset = "napari --reset"
+
+[feature.stardist.tasks]
+stardist = { cmd = "python -m napari" }
 
 [dependencies]
 pyclesperanto-prototype = "*"

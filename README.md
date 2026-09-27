@@ -1,5 +1,7 @@
 # CFMO – UPCH: Análisis de Bioimágenes
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+
 Material de clase del módulo de **post-análisis de imágenes** del *Curso de Fundamentos en Microscopía de Fluorescencia y Confocal (CFMO)*, dictado en la Universidad Peruana Cayetano Heredia (UPCH) como parte del módulo práctico organizado por **LABI (Latin American Bioimaging)**.
 
 Link del Canva: https://canva.link/lq0xm50hyxlsrln
@@ -177,3 +179,18 @@ Asigna un ID único a cada objeto detectado — este es el paso que convierte "m
 
 **Agustín Corbat** (material original)
 📧 acorbat@df.uba.ar
+
+## 👥 Equipo docente y créditos
+
+**Instructores responsables del módulo práctico (UPCH / LABI):**
+- **Fabricio Chimoy Ayala** — fabricio.chimoy.ayala@gmail.com | [GitHub](https://github.com/FabricioNoise-tif)
+- **Fabio Torres Bocanegra**
+- **Edson Bernal**
+
+**Material original adaptado:**
+- **Agustín Corbat** (KHIPUX – Quito) — acorbat@df.uba.ar | [acorbat.github.io](https://acorbat.github.io)
+
+## 📖 Cómo citar este material
+
+Si utilizas este entorno o material en tus investigaciones o cursos, por favor cita:
+> Chimoy Ayala, F., Torres Bocanegra, F., Bernal, E., & Corbat, A. (2026). *Introducción a FIJI y Napari Assistant - Taller CFMO LABI UPCH 2026* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.XXXXXXX
